@@ -43,7 +43,7 @@ export default function HomePage() {
     return (
         <div className="min-h-screen relative">
             <Image
-                src="https://images.unsplash.com/photo-1484589065579-248aad0d8b13?q=80&w=2859&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src="/images/background.jpg"
                 alt="Background"
                 fill
                 sizes="100vw"
@@ -56,8 +56,8 @@ export default function HomePage() {
             />
             <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
                 <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
-                    <h1 className="text-4xl font-bold mb-4 uppercase tracking-widest">Welcome to Immerse</h1>
-                    <p className="text-xl mb-8">Connect with friends and share your favorite music on campus</p>
+                    <h1 className="text-4xl font-bold mb-4 uppercase tracking-widest">Immerse</h1>
+                    <p className="text-xl mb-8">Discover and share new music with friends.</p>
                     <button
                         onClick={handleGetStarted}
                         className="bg-black text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-800 transition duration-300 uppercase"

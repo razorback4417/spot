@@ -1,18 +1,56 @@
-//home/page.tsx
+// src/app/home/page.tsx
 'use client';
 
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
+const REDIRECT_URI = 'http://localhost:3000/home';
+const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
+const RESPONSE_TYPE = 'token';
+const SCOPE = 'user-read-recently-played';
+
+interface Song {
+  title: string;
+  artist: string;
+  imageUrl: string;
+  spotifyUrl: string;
+}
+
+const sampleSong: Song = {
+  title: "SPD INTERLUDE",
+  artist: "TRAVIS SCOTT",
+  imageUrl: "https://f4.bcbits.com/img/a0049251227_10.jpg",
+  spotifyUrl: "https://open.spotify.com/track/4gh0ZnHzaTMT1sDga7Ek0N?si=238cdf5ac3c54b4f"
+};
+
+const songs: Song[] = Array(8).fill(sampleSong);
 
 const HomeScreen: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
+    const hash = window.location.hash;
+    let token = localStorage.getItem("token");
+
+    if (!token && hash) {
+      token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"))?.split("=")[1] ?? null;
+
+      window.location.hash = "";
+      if (token) {
+        localStorage.setItem("token", token);
+        router.push('/gallery');
+      }
+    } else if (token) {
+      router.push('/gallery');
+    }
+
     const scrollContainer = scrollRef.current;
     if (scrollContainer) {
       const scrollAmount = scrollContainer.scrollWidth / 2;
       let scrollPos = 0;
-
       const scroll = () => {
         scrollPos += 1;
         if (scrollPos >= scrollAmount) {
@@ -20,50 +58,45 @@ const HomeScreen: React.FC = () => {
         }
         scrollContainer.scrollLeft = scrollPos;
       };
-
       const intervalId = setInterval(scroll, 15);
-
       return () => clearInterval(intervalId);
     }
-  }, []);
+  }, [router]);
 
   return (
-    <div className="min-h-screen relative">
-      <Image
-        src="https://images.unsplash.com/photo-1484589065579-248aad0d8b13?q=80&w=2859&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        alt="Background"
-        fill
-        sizes="100vw"
-        style={{
-          objectFit: 'cover',
-          objectPosition: 'center',
-        }}
-        quality={100}
-        priority
-      />
-      <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-black">
+      <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
         <h1 className="text-6xl font-bold text-white mb-8 font-['Helvetica'] uppercase tracking-widest">
           IMMERSE
         </h1>
+        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}
+           className="bg-white text-black font-bold py-2 px-4 mb-8 hover:bg-gray-200">
+          CONNECT TO SPOTIFY
+        </a>
         <div
           ref={scrollRef}
-          className="w-full max-w-5xl overflow-x-hidden whitespace-nowrap"
+          className="w-full max-w-7xl overflow-x-hidden whitespace-nowrap"
           style={{ maskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)' }}
         >
           <div className="inline-flex">
-            {[...Array(10)].map((_, index) => (
+            {songs.map((song, index) => (
               <div
                 key={index}
-                className="w-72 h-96 bg-white rounded-lg shadow-lg mx-4 flex-shrink-0 inline-block"
+                className="w-72 h-96 mx-4 flex-shrink-0 inline-block relative overflow-hidden"
               >
-                <div className="h-48 bg-gray-200 rounded-t-lg relative">
-                  <div className="absolute top-2 left-2 bg-white px-2 py-1 text-sm font-bold rounded-lg">
-                    CARD {index + 1}
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h2 className="text-xl font-bold mb-2 uppercase">Card Title {index + 1}</h2>
-                  <p className="text-gray-600 font-['Helvetica']">This is a sample card description.</p>
+                <Image
+                  src={song.imageUrl}
+                  alt={song.title}
+                  layout="fill"
+                  objectFit="cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4">
+                  <h2 className="text-white text-2xl font-bold mb-1 truncate" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
+                    {song.title}
+                  </h2>
+                  <p className="text-gray-300 truncate" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
+                    {song.artist}
+                  </p>
                 </div>
               </div>
             ))}
