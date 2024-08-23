@@ -113,7 +113,7 @@ export default function PhoneLogin() {
                 priority
             />
             <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
-                <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
+                <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center hover:scale-105 transform transition duration-300 ease-in-out">
                     <h1 className="text-3xl font-bold text-center mb-6 uppercase tracking-widest">
                         {step === 'phone' ? 'Enter Phone #' : 'Enter Code'}
                     </h1>

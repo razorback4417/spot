@@ -110,6 +110,8 @@ const GalleryPage: React.FC = () => {
       </div>
     </div>
   );
+
+
 };
 
 export default GalleryPage;

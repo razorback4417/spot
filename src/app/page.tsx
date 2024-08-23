@@ -55,7 +55,7 @@ export default function HomePage() {
                 priority
             />
             <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
-                <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
+                <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center hover:scale-105 transform transition duration-300 ease-in-out">
                     <h1 className="text-4xl font-bold mb-4 uppercase tracking-widest">Immerse</h1>
                     <p className="text-xl mb-8">Discover and share new music with friends.</p>
                     <button
