@@ -1,17 +1,16 @@
 //phone-login/page.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { auth } from '../firebase/firebaseConfig';
 import {
     RecaptchaVerifier,
     signInWithPhoneNumber,
-    PhoneAuthProvider,
-    signInWithCredential
+    ConfirmationResult
 } from 'firebase/auth';
-import countryCodes, { CountryCode } from '../utils/countryCodes';
+import countryCodes from '../utils/countryCodes';
 
 interface CountryCodeDropdownProps {
     selectedCountry: string;
@@ -38,10 +37,14 @@ export default function PhoneLogin() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [countryCode, setCountryCode] = useState('US');
     const [verificationCode, setVerificationCode] = useState('');
-    const [verificationId, setVerificationId] = useState('');
+    const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
     const [step, setStep] = useState('phone');
     const [error, setError] = useState('');
     const router = useRouter();
+
+    useEffect(() => {
+        setupRecaptcha();
+    }, []);
 
     const setupRecaptcha = () => {
         if (!(window as any).recaptchaVerifier) {
@@ -73,22 +76,28 @@ export default function PhoneLogin() {
         }
 
         try {
-            setupRecaptcha();
             const appVerifier = (window as any).recaptchaVerifier;
-            const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, appVerifier);
-            setVerificationId(confirmationResult.verificationId);
+            const confirmation = await signInWithPhoneNumber(auth, fullPhoneNumber, appVerifier);
+            setConfirmationResult(confirmation);
             setStep('code');
         } catch (error: any) {
             console.error('Error sending verification code:', error);
             setError(error.message || 'Failed to send verification code. Please try again.');
+            // Reset reCAPTCHA
+            // (window as any).recaptchaVerifier.render().then((widgetId: any) => {
+            //     grecaptcha.reset(widgetId);
+            // });
         }
     };
 
     const handleVerifyCode = async () => {
         setError('');
+        if (!confirmationResult) {
+            setError('Something went wrong. Please try again.');
+            return;
+        }
         try {
-            const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
-            const result = await signInWithCredential(auth, credential);
+            const result = await confirmationResult.confirm(verificationCode);
             if (result.user) {
                 router.push('/home');
             }
