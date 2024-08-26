@@ -114,12 +114,8 @@ const HomeScreen: React.FC = () => {
     <div className="min-h-screen bg-black">
       <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
         <h1 className="text-6xl font-bold text-white mb-8 font-['Helvetica'] uppercase tracking-widest">
-          IMMERSE
+          Bloom
         </h1>
-        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}
-           className="bg-white text-black font-bold py-2 rounded-lg px-4 mb-8 hover:bg-gray-200 hover:scale-105 transform transition duration-300 ease-in-out">
-          CONNECT TO SPOTIFY
-        </a>
         <div
           ref={scrollRef}
           className="w-full max-w-7xl overflow-x-hidden whitespace-nowrap"
